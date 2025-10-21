@@ -18,12 +18,34 @@ import {
 export default function BudgetPlanningPage() {
   const [selectedYear, setSelectedYear] = useState('2025');
   const [selectedTerm, setSelectedTerm] = useState('First Term');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newCategory, setNewCategory] = useState({
+    name: '',
+    amount: '',
+    description: ''
+  });
 
   const budgetCategories = [
     { name: 'Academic', percentage: 85, color: 'bg-purple-600' },
     { name: 'Maintenance', percentage: 25, color: 'bg-green-500' },
     { name: 'Technology', percentage: 20, color: 'bg-blue-600' },
   ];
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewCategory(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveCategory = () => {
+    console.log('Saving category:', newCategory);
+    alert('Budget category added successfully! (No backend connected)');
+    setShowAddModal(false);
+    setNewCategory({
+      name: '',
+      amount: '',
+      description: ''
+    });
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -160,7 +182,10 @@ export default function BudgetPlanningPage() {
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Budget Overview</h3>
-            <button className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700">
+            <button 
+              onClick={() => setShowAddModal(true)}
+              className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700"
+            >
               Add new category
             </button>
           </div>
@@ -183,6 +208,70 @@ export default function BudgetPlanningPage() {
           </div>
         </div>
       </main>
+
+      {/* Add New Budget Category Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Add New Budget Category</h3>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={newCategory.name}
+                    onChange={handleInputChange}
+                    placeholder="Maintenance"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                  <input
+                    type="number"
+                    name="amount"
+                    value={newCategory.amount}
+                    onChange={handleInputChange}
+                    placeholder="800000"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  name="description"
+                  value={newCategory.description}
+                  onChange={handleInputChange}
+                  placeholder="Category Description"
+                  rows={4}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="flex-1 px-4 py-2 border border-red-600 text-red-600 text-sm font-medium rounded-md hover:bg-red-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveCategory}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

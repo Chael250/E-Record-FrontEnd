@@ -25,6 +25,16 @@ export default function StaffPayrollPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDepartment, setSelectedDepartment] = useState('Department');
   const [selectedStatus, setSelectedStatus] = useState('Status');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newStaff, setNewStaff] = useState({
+    name: '',
+    amount: '',
+    staffDepartment: '',
+    paymentMode: '',
+    paymentStatus: '',
+    joiningDate: '',
+    contract: null as File | null
+  });
 
   // Sample data for bar chart
   const payrollTrendData = [
@@ -54,6 +64,33 @@ export default function StaffPayrollPage() {
   ];
 
   const totalPages = 68;
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewStaff(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewStaff(prev => ({ ...prev, contract: file }));
+    }
+  };
+
+  const handleSaveStaff = () => {
+    console.log('Saving staff:', newStaff);
+    alert('Staff added successfully! (No backend connected)');
+    setShowAddModal(false);
+    setNewStaff({
+      name: '',
+      amount: '',
+      staffDepartment: '',
+      paymentMode: '',
+      paymentStatus: '',
+      joiningDate: '',
+      contract: null
+    });
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -220,7 +257,10 @@ export default function StaffPayrollPage() {
                 <button className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700">
                   Export Report
                 </button>
-                <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">
+                <button 
+                  onClick={() => setShowAddModal(true)}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+                >
                   Add new Staff
                 </button>
                 <button className="px-4 py-2 bg-white border border-purple-600 text-purple-600 text-sm font-medium rounded-md hover:bg-purple-50">
@@ -305,6 +345,137 @@ export default function StaffPayrollPage() {
           </div>
         </div>
       </main>
+
+      {/* Add new Staff Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Add new Staff</h3>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={newStaff.name}
+                    onChange={handleInputChange}
+                    placeholder="Dushimire aine"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                  <input
+                    type="number"
+                    name="amount"
+                    value={newStaff.amount}
+                    onChange={handleInputChange}
+                    placeholder="800000"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Staff Department</label>
+                  <select
+                    name="staffDepartment"
+                    value={newStaff.staffDepartment}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Select department</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Doctor">Doctor</option>
+                    <option value="Cook">Cook</option>
+                    <option value="Cleandrives">Cleandrives</option>
+                    <option value="Discipline staff">Discipline staff</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Payment mode</label>
+                  <select
+                    name="paymentMode"
+                    value={newStaff.paymentMode}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Bank payments</option>
+                    <option value="Bank payments">Bank payments</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Mobile Money">Mobile Money</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Payment status</label>
+                  <select
+                    name="paymentStatus"
+                    value={newStaff.paymentStatus}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Select status</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Joining Date</label>
+                  <input
+                    type="date"
+                    name="joiningDate"
+                    value={newStaff.joiningDate}
+                    onChange={handleInputChange}
+                    placeholder="10/10/2025"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Staff Contract</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
+                  <input
+                    type="file"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    id="contract-upload"
+                  />
+                  <label htmlFor="contract-upload" className="cursor-pointer">
+                    <p className="text-sm text-gray-600">
+                      {newStaff.contract ? newStaff.contract.name : 'Upload staff contract'}
+                    </p>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="flex-1 px-4 py-2 border border-red-600 text-red-600 text-sm font-medium rounded-md hover:bg-red-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveStaff}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -24,6 +24,22 @@ export default function ExpenseManagementPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('Category');
   const [selectedStatus, setSelectedStatus] = useState('Status');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [newExpense, setNewExpense] = useState({
+    vendor: '',
+    amount: '',
+    category: '',
+    status: '',
+    description: ''
+  });
+  const [editExpense, setEditExpense] = useState({
+    vendor: '',
+    amount: '',
+    category: '',
+    status: '',
+    description: ''
+  });
 
   // Sample table data
   const expensesData = Array(15).fill(null).map((_, index) => ({
@@ -35,6 +51,46 @@ export default function ExpenseManagementPage() {
   }));
 
   const totalPages = 68;
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewExpense(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveExpense = () => {
+    console.log('Saving expense:', newExpense);
+    alert('Expense added successfully! (No backend connected)');
+    setShowAddModal(false);
+    setNewExpense({
+      vendor: '',
+      amount: '',
+      category: '',
+      status: '',
+      description: ''
+    });
+  };
+
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEditExpense(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleOpenEdit = (expense: any) => {
+    setEditExpense({
+      vendor: expense.vendor,
+      amount: expense.amount.toString(),
+      category: 'Electronics',
+      status: expense.status,
+      description: expense.purpose
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateExpense = () => {
+    console.log('Updating expense:', editExpense);
+    alert('Expense updated successfully! (No backend connected)');
+    setShowEditModal(false);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -184,7 +240,10 @@ export default function ExpenseManagementPage() {
                 <button className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700">
                   Export Report
                 </button>
-                <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">
+                <button 
+                  onClick={() => setShowAddModal(true)}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+                >
                   Add new Expense
                 </button>
               </div>
@@ -219,7 +278,10 @@ export default function ExpenseManagementPage() {
                         <button className="px-3 py-1 bg-purple-600 text-white text-sm rounded-md hover:bg-purple-700">
                           View
                         </button>
-                        <button className="px-3 py-1 bg-blue-100 text-blue-600 text-sm rounded-md hover:bg-blue-200">
+                        <button 
+                          onClick={() => handleOpenEdit(item)}
+                          className="px-3 py-1 bg-blue-100 text-blue-600 text-sm rounded-md hover:bg-blue-200"
+                        >
                           Edit
                         </button>
                       </div>
@@ -275,6 +337,198 @@ export default function ExpenseManagementPage() {
           </div>
         </div>
       </main>
+
+      {/* Edit Expenses Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Edit Expenses</h3>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Vendor</label>
+                  <input
+                    type="text"
+                    name="vendor"
+                    value={editExpense.vendor}
+                    onChange={handleEditInputChange}
+                    placeholder="Dushimire aine"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                  <input
+                    type="number"
+                    name="amount"
+                    value={editExpense.amount}
+                    onChange={handleEditInputChange}
+                    placeholder="800000"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <select
+                    name="category"
+                    value={editExpense.category}
+                    onChange={handleEditInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="Electronics">Electronics</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Technology">Technology</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <select
+                    name="status"
+                    value={editExpense.status}
+                    onChange={handleEditInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  name="description"
+                  value={editExpense.description}
+                  onChange={handleEditInputChange}
+                  placeholder="Expense Description"
+                  rows={4}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 px-4 py-2 border border-red-600 text-red-600 text-sm font-medium rounded-md hover:bg-red-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdateExpense}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Expenses Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Add New Expenses</h3>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Vendor</label>
+                  <input
+                    type="text"
+                    name="vendor"
+                    value={newExpense.vendor}
+                    onChange={handleInputChange}
+                    placeholder="Dushimire aine"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                  <input
+                    type="number"
+                    name="amount"
+                    value={newExpense.amount}
+                    onChange={handleInputChange}
+                    placeholder="800000"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <select
+                    name="category"
+                    value={newExpense.category}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Electronics</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Technology">Technology</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <select
+                    name="status"
+                    value={newExpense.status}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Paid</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  name="description"
+                  value={newExpense.description}
+                  onChange={handleInputChange}
+                  placeholder="Expense Description"
+                  rows={4}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="flex-1 px-4 py-2 border border-red-600 text-red-600 text-sm font-medium rounded-md hover:bg-red-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveExpense}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

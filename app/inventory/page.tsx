@@ -24,6 +24,15 @@ export default function InventoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('Category');
   const [selectedStatus, setSelectedStatus] = useState('Status');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newItem, setNewItem] = useState({
+    itemName: '',
+    amount: '',
+    category: '',
+    supplierName: '',
+    stockStatus: '',
+    quantity: ''
+  });
 
   // Sample table data
   const inventoryData = [
@@ -37,6 +46,25 @@ export default function InventoryPage() {
   ];
 
   const totalPages = 68;
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewItem(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveItem = () => {
+    console.log('Saving item:', newItem);
+    alert('Item added successfully! (No backend connected)');
+    setShowAddModal(false);
+    setNewItem({
+      itemName: '',
+      amount: '',
+      category: '',
+      supplierName: '',
+      stockStatus: '',
+      quantity: ''
+    });
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -204,7 +232,10 @@ export default function InventoryPage() {
                 <button className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700">
                   Export Report
                 </button>
-                <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">
+                <button 
+                  onClick={() => setShowAddModal(true)}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+                >
                   Add Item
                 </button>
               </div>
@@ -297,6 +328,117 @@ export default function InventoryPage() {
           </div>
         </div>
       </main>
+
+      {/* Add New Item Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Add New Item</h3>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Item Name</label>
+                  <input
+                    type="text"
+                    name="itemName"
+                    value={newItem.itemName}
+                    onChange={handleInputChange}
+                    placeholder="Rice"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                  <input
+                    type="number"
+                    name="amount"
+                    value={newItem.amount}
+                    onChange={handleInputChange}
+                    placeholder="800000"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <select
+                    name="category"
+                    value={newItem.category}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Electronics</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Maintenance">Maintenance</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Supplier Name</label>
+                  <input
+                    type="text"
+                    name="supplierName"
+                    value={newItem.supplierName}
+                    onChange={handleInputChange}
+                    placeholder="Dushimire aine"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Stock Status</label>
+                  <select
+                    name="stockStatus"
+                    value={newItem.stockStatus}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="">Low in Stock</option>
+                    <option value="High in Stock">High in Stock</option>
+                    <option value="Low in Stock">Low in Stock</option>
+                    <option value="Finished">Finished</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    value={newItem.quantity}
+                    onChange={handleInputChange}
+                    placeholder="100"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="flex-1 px-4 py-2 border border-red-600 text-red-600 text-sm font-medium rounded-md hover:bg-red-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveItem}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
