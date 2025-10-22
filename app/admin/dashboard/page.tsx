@@ -15,6 +15,8 @@ import {
 
 export default function AdminDashboardPage() {
   const [selectedYear, setSelectedYear] = useState('2025');
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [selectedSchool, setSelectedSchool] = useState<any>(null);
 
   // Sample data for schools request
   const schoolsRequestData = [
@@ -42,6 +44,21 @@ export default function AdminDashboardPage() {
     { name: 'Dushimire Aine', school: 'Rwanda coding academy', role: 'Accountant', joiningDate: '10/5/2025', email: 'aishadushimire@bc.rw' },
     { name: 'Dushimire Aine', school: 'Rwanda coding academy', role: 'Accountant', joiningDate: '10/5/2025', email: 'aishadushimire@bc.rw' },
   ];
+
+  const handleViewRequest = (school: any) => {
+    setSelectedSchool(school);
+    setShowRequestModal(true);
+  };
+
+  const handleAcceptRequest = () => {
+    alert('School request accepted! (No backend connected)');
+    setShowRequestModal(false);
+  };
+
+  const handleRejectRequest = () => {
+    alert('School request rejected! (No backend connected)');
+    setShowRequestModal(false);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -172,7 +189,10 @@ export default function AdminDashboardPage() {
                     <td className="px-6 py-4 text-sm text-gray-600">{item.location}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <button className="px-3 py-1 bg-purple-600 text-white text-sm rounded-md hover:bg-purple-700">
+                        <button 
+                          onClick={() => handleViewRequest(item)}
+                          className="px-3 py-1 bg-purple-600 text-white text-sm rounded-md hover:bg-purple-700"
+                        >
                           View
                         </button>
                         <button className="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700">
@@ -263,6 +283,101 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </main>
+
+      {/* School Request Modal */}
+      {showRequestModal && selectedSchool && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">School Requests</h3>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">School Name</label>
+                  <input
+                    type="text"
+                    value={selectedSchool.name}
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">School Email</label>
+                  <input
+                    type="email"
+                    value={selectedSchool.email}
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">School Phone</label>
+                  <input
+                    type="text"
+                    value={selectedSchool.phone}
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">School Location</label>
+                  <input
+                    type="text"
+                    value={selectedSchool.location}
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Payment Status</label>
+                  <input
+                    type="text"
+                    value="Paid"
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">School Logo</label>
+                  <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
+                    <School className="text-white" size={24} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={handleRejectRequest}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700"
+                >
+                  Reject Request
+                </button>
+                <button
+                  onClick={handleAcceptRequest}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700"
+                >
+                  Accept Request
+                </button>
+                <button
+                  onClick={() => setShowRequestModal(false)}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
